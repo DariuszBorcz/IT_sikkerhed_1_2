@@ -4,25 +4,18 @@
 
 Repository til kurset **Softwaresikkerhed** 
 
----
-
-## 📋 Om Dette Repository
-
-Dette repository indeholder noter, øvelser, scripts og projekter fra faget **Softwaresikkerhed** som en del af IT-Sikkerhed Top-Up Bachelor uddannelsen på Zealand (Næstved).
 
 
-## 📝 Licens
+Unit test opgaver
 
-Dette repository er til personlig uddannelse på Zealand Erhvervsakademi.
+![alt text](<Screenshot 2026-02-03 111039.png>)
 
----
+![alt text](<Screenshot 2026-02-03 111249.png>)
 
-## 👤 Kontakt
+![alt text](<Screenshot 2026-02-03 111348.png>)
 
-**Studerende**: Dariusz Borcz
-**Uddannelse**: IT-Sikkerhed Top-Up Bachelor  
-**Institution**: Zealand Erhvervsakademi, Næstved  
+![alt text](<Screenshot 2026-02-03 111353.png>)
 
----
+![alt text](<Screenshot 2026-02-03 111404.png>)
 
-**Sidst opdateret**: Februar 2026
+![alt text](<Screenshot 2026-02-03 111446.png>)
