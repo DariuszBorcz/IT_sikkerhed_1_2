@@ -32,6 +32,7 @@ Formål: test input, der tilhører samme kategori (fx gyldigt eller ugyldigt pas
      - Gyldigt password: MitKode123
      - For kort: 123
      - For langt: MITKODE1234567890
+
 Security gate: code/dev gate (unit tests på testmiljø, sikrer at input validering fungerer korrekt)
 
 2. **Grænseværdi test**:
@@ -41,6 +42,7 @@ Formål: test på og lige omkring kritiske grænser
      - Længde 8 = gyldigt
      - Længde 16 = gyldigt
      - Længde 17 = for langt
+
 Security gate: code/dev gate (testmiljø, tjekker at funktionalitet og krav ikke brydes)
 
 3. **CRUD(L) test**
@@ -51,6 +53,7 @@ Formål: Test Create, Read, Update, Delete (og Login)
      - Update: ændrer password til NyKode456
      - Delete: sletter password
      - Login: tjek om password virker
+
 Security gate: integration gate (testen sikrer at integration mellem komponenter/DB virker korrekt)
 
 4. **Cycle process test**
@@ -60,7 +63,8 @@ Formål: Test hele workflow/cyklus.
      - System sender token
      - User indtaster token + nyt password
      - System validerer og opdaterer password
-   - Security gate: system / end-to-end gate (hele workflow testes i staging, sikrer at kritiske brugerrejser fungerer)
+
+Security gate: system / end-to-end gate (hele workflow testes i staging, sikrer at kritiske brugerrejser fungerer)
 
    **Flowchart:**
 ![alt text](<Screenshot 2026-02-05 142242.png>)
@@ -71,11 +75,11 @@ Formål: test lagdelt (unit -> integration → system).
      - Unit: is_valid_password("MitKode123") → True
      - Integration: opret bruger + login
      - System: hele workflow: password reset
-   - Security gate: afhængigt af niveau (unit, integration, system)?
+
+Security gate: afhængigt af niveau (unit, integration, system)?
 
 6. **Decision table test**:
 Formål: Test kombinationer af input og forventet output.
-   - Security gate: Code / Dev gate (unit/data-drevne tests for input validering)
 
    |      Password     | Has Uppercase | Has Number | Length OK | Forventet |
    |:-----------------:|:-------------:|:----------:|:---------:|:---------:|
@@ -84,3 +88,5 @@ Formål: Test kombinationer af input og forventet output.
    | MitKode           | Yes           | No         | Yes       | Fail      |
    | Mit123            | Yes           | Yes        | No        | Fail      |
    | MITKODE1234567890 | Yes           | Yes        | No        | Fail      |
+
+Security gate: code/dev gate (unit/data-drevne tests for input validering)
