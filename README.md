@@ -67,7 +67,7 @@ Formål: Test hele workflow/cyklus.
 Security gate: system / end-to-end gate (hele workflow testes i staging, sikrer at kritiske brugerrejser fungerer)
 
    **Flowchart:**
-![alt text](<Screenshot 2026-02-05 142242.png>)
+![alt text](<Screenshot 2026-02-05 142242-1.png>)
 
 5. **Testpyramiden**:
 Formål: test lagdelt (unit -> integration → system).

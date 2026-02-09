@@ -1,0 +1,26 @@
+.venv\Scripts\Activate.ps1{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "pytest run all",
+            "type": "shell",
+            "command": "cls; pytest -v -s",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "pytest run only focus",
+            "detail": "Runs only tests marked with @pytest.mark.focus",
+            "type": "shell",
+            "command": "cls; pytest -v -s -m focus",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

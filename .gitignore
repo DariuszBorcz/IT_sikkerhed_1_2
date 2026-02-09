@@ -1,1 +1,19 @@
-unitestinginpython/
+# Python virtuelle miljøer
+venv/
+.venv/
+**/venv/
+env/
+
+# Python cache (midlertidige filer)
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# VS Code indstillinger (valgfrit - men vi vil gerne beholde tasks.json)
+.vscode/
+!.vscode/tasks.json
+
+# System filer
+.DS_Store
+Thumbs.db
