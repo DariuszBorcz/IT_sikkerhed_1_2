@@ -9,4 +9,4 @@ jobs:
         with:
           python-version: '3.8'
       - run: pip install pytest
-      - run: pytest -v
+      - run: pytest -v dag2_unittestingpython/test/

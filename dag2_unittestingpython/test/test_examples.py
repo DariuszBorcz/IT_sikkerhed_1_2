@@ -15,7 +15,7 @@ def test_skip():
     assert True # failed test bliver ignoreret
     raise RuntimeError("Test crashede med vilje") # crash bliver også ignoreret
 
-
+@pytest.mark.skip(reason="Springes over med vilje") # Denne test bliver slet ikke kørt
 def test_crash():
     # Denne test crasher med en exception
     raise RuntimeError("Test crashede med vilje")
