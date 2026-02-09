@@ -1,7 +1,7 @@
 name: Software Security Pipeline
 
-on: [push]
-
+# on: [push] # Kør hver eneste gang, jeg gemmer noget (push), og hver gang nogen vil flette kode (pull request)
+on: workflow_dispatch # Nu kører den aldrig af sig selv. Du skal gå ind på GitHub og trykke på en knap, der hedder "Run workflow" for at starte den. 
 jobs:
   test:
     runs-on: ubuntu-latest

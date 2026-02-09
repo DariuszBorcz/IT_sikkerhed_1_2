@@ -90,3 +90,9 @@ Formål: Test kombinationer af input og forventet output.
    | MITKODE1234567890 | Yes           | Yes        | No        | Fail      |
 
 Security gate: code/dev gate (unit/data-drevne tests for input validering)
+
+
+Ekstra opgave:  pipeline:
+
+![alt text](<Screenshot 2026-02-09 210525.png>)
+
