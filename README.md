@@ -122,8 +122,3 @@ Tests der beviser det virker:
 
 - Tests: 
 ![alt text](<Screenshot 2026-02-10 140801.png>)
-
-
-
-Sikkerhedsrisici ved fejlende tests:
-- hardcoded password, skrevet som almindelig tekst (commit til git = alle ser passwords)
