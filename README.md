@@ -96,3 +96,34 @@ Ekstra opgave:  pipeline:
 
 ![alt text](<Screenshot 2026-02-09 210525.png>)
 
+
+
+Dag 4. Hashing og kryptering
+
+- Hvorfor Flat File?  pga. deres enkelhed og høje portabilitet er de enkle at implementere uden db server (de kan fx. kopieres frit uden afhængighede), så de passer  til små projekter.
+
+fungerende flat_file_database med:
+
+User model (person_id, first_name, last_name, address, street_number, password, enabled)
+Data_handler til CRUD operationer
+Flat_file_loader til at gemme/loade JSON
+Tests der beviser det virker:
+
+- Given/When/Then test logik og sikkerhedsrisici af test kommentarer:
+![alt text](<Screenshot 2026-02-10 140443.png>)
+
+![alt text](<Screenshot 2026-02-10 140453.png>)
+
+![alt text](<Screenshot 2026-02-10 140504.png>)
+
+![alt text](<Screenshot 2026-02-10 140513.png>)
+
+![alt text](<Screenshot 2026-02-10 140519.png>)
+
+- Tests: 
+![alt text](<Screenshot 2026-02-10 140801.png>)
+
+
+
+Sikkerhedsrisici ved fejlende tests:
+- hardcoded password, skrevet som almindelig tekst (commit til git = alle ser passwords)
