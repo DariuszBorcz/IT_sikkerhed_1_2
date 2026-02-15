@@ -340,3 +340,13 @@ I et produktionsmiljø ville vi anbefale:
 - C extensions for secure memory wiping
 - Hardware security modules (HSM)
 - Trusted execution environments (TEE)
+
+Tests:
+![alt text](<Screenshot 2026-02-15 185642.png>)
+
+Encrypted data:
+![alt text](<Screenshot 2026-02-15 185714.png>)
+
+
+demo_users.json:
+![alt text](<Screenshot 2026-02-15 185724.png>)
