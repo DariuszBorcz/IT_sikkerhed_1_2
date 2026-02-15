@@ -122,3 +122,221 @@ Tests der beviser det virker:
 
 - Tests: 
 ![alt text](<Screenshot 2026-02-10 140801.png>)
+
+
+
+Opgave 2:
+
+# Kryptering og Hashing Implementation
+
+## Om dette projekt
+
+Dette projekt er udviklet som en læringsopgave med fokus på kryptering, hashing og GDPR-compliance. 
+
+### Udvikling med AI-assistance
+
+**Baggrund:**
+Som studerende med begrænset programmering erfaring valgte jeg at benytte AI-værktøjer (primært Claude.ai og Grok) til at implementere produktionsklar kode med robust error handling
+
+**Hvorfor AI?**
+- **Nysgerrighed**: Afprøve hvordan moderne AI-værktøjer håndterer sikkerhedsopgaver
+- **Læring**: Forstå komplekse koncepter gennem praktisk implementation
+- **Sammenligning**: Se forskellige tilgange fra Claude vs Grok
+
+**Kompleksitet:**
+Koden blev mere kompleks end oprindeligt planlagt fordi jeg løste problemer iterativt:
+1. Tests fejlede → Tilføjede dekryptering
+2. Class-level variable bug → Fixede instance isolation
+3. Silent errors → Tilføjede robust exception handling
+4. Memory security → Tilføjede overwrite i `clear_memory()`
+
+
+---
+
+Kryptering: Felter, som vi gerne vil kunne læse igen (f.eks. fornavn, efternavn, by, email, telefon). Kryptering skal kunne dekrypteres, men skal ikke gemmes som klar tekst.
+
+Hashing: Felter som kun skal kunne valideres, men aldrig dekrypteres. fx passwords (bcrypt eller sha256 + salt)
+
+Alle kodeændringer blev lavet med claude.ai og koden blev kompleks fordi jeg prøvede at løse problemer løbende, jeg gætter at der findes svagheder og steder hvor det er blevet unødigt komplekst 
+
+Adskillelse:  
+- password til bcrypt hashing
+- persondata (navn, adresse, email, telefon osv.) til Fernet symmetrisk kryptering
+- encryption at rest, data ligger krypteret i JSON filen
+- dekryptering kun i memory (loader - dekrypterer - arbejder med plaintext i RAM)
+- clear_memory() — simpel implementering der tømmer listen (i hukommelsen)
+- der blev tilføjet ekstra sikkerhedstests (godt!)
+
+## Algoritmevalg
+
+### Kryptering: Fernet (AES-128 CBC)
+**Valgt fordi:**
+- FIPS 140-2 approved (US government standard)
+- Built-in HMAC for integrity verification
+- Automatisk timestamp support
+- Del af `cryptography` biblioteket (industry standard)
+
+**Alternativer overvejet:**
+- AES-256 GCM: Stærkere, men mere kompleks
+- RSA: Asymmetrisk, men for langsom til storage
+- Triple DES: Forældet, ikke anbefalet
+
+### Hashing: bcrypt
+**Valgt fordi:**
+- OWASP Top 10 anbefaling
+- Automatisk salt generation
+- Work factor (2^12 iterations by default)
+- Slow by design (brute-force beskyttelse)
+
+**Alternativer overvejet:**
+- Argon2: Nyere, men mindre kendt
+- PBKDF2: God, men hurtigere end bcrypt
+- SHA-256: FOR hurtig til passwords
+
+---
+
+## Hvornår krypteres data?
+
+**Tidspunkt:** Ved save til fil (`_save()` metoden)
+
+**Hvorfor:**
+- GDPR Article 32: Encryption of personal data at rest
+- Beskyttelse mod database theft
+- Defense-in-depth princip
+
+**Hvad krypteres:**
+Persondata (first_name, last_name, address, street_number)
+
+**Hvad krypteres IKKE:**
+- Passwords (allerede hashet med bcrypt)
+- person_id (ikke sensitiv)
+- enabled (boolean, ikke sensitiv)
+
+---
+
+## Hvornår dekrypteres data?
+
+**Tidspunkt:** Ved load fra fil (`_load_and_decrypt_all()`)
+
+**Hvorfor:**
+- Performance: Dekrypter én gang i stedet for konstant
+- Funktionalitet: Application layer arbejder med plaintext
+- Fleksibilitet: Nemmere søgning og filtrering
+
+**Trade-off:**
+Data ligger plaintext i RAM (mitigeret med `clear_memory()`)
+
+---
+
+## Hvornår fjernes data fra hukommelsen?
+
+**Tidspunkt:** Eksplicit via `clear_memory()` metoden
+
+**Hvorfor:**
+- GDPR Article 5: Data minimisation
+- GDPR Article 17: Right to erasure
+- Security: Beskyt mod memory dumps
+
+**Implementation:**
+1. Overskriv sensitive felter med "0" * 128
+2. Clear users liste
+3. Force garbage collection (`gc.collect()`)
+
+---
+
+## Beskriv om du tager hensyn til noget andet vedrørende dekrypteret data fra hukommelsen
+
+### Ja - flere hensyn:
+
+**1. Overskriv før sletning (Defense-in-depth)**
+- Python's `clear()` sletter kun referencer, ikke memory
+- Vi overskriver data med "0" * 128 først
+- Gør data værdiløs hvis memory dumpes
+
+**2. Garbage Collection**
+- `gc.collect()` forsøger at frigive memory hurtigere
+- Reducerer tiden dekrypteret data ligger i RAM
+- Ikke garanteret, men best practice
+
+**3. Memory Dump Risici**
+Vi er bevidste om følgende risici:
+- **Swap/Pagefile**: Data kan swappes til disk (ukrypteret)
+- **Crash dumps**: Process dumps kan indeholde dekrypteret data
+- **Hibernation**: RAM gemmes til disk ved hibernation
+- **Cold boot attacks**: Memory kan læses efter restart
+
+**4. Mitigations (Production anbefalinger):**
+- Krypter swap partition (Linux: dm-crypt, Windows: BitLocker)
+- Disable core dumps: `ulimit -c 0`
+- Disable hibernation på sikkerhedskritiske systemer
+- Full-disk encryption som ekstra lag
+
+**5. Python Begrænsninger**
+- CPython garanterer ikke fuld memory cleanup
+- Strings er immutable (gamle værdier kan overleve)
+- Overskriving er "best effort", ikke garanteret
+
+**Konklusion:**
+Vores `clear_memory()` implementation er best practice for Python, men har begrænsninger. I et high-security miljø ville vi anbefale:
+- C extensions for secure memory wiping
+- Memory locking (`mlock()`) for at forhindre swapping
+- Process isolation (containers/VMs)
+
+---
+
+## GDPR Compliance
+
+- ✅ Article 32: Encryption at rest (Fernet)
+- ✅ Article 32: Password security (bcrypt)
+- ✅ Article 5: Data minimisation (clear_memory)
+- ✅ Article 17: Right to erasure (delete_user + clear_memory)
+
+---
+
+## Dataflow
+```
+Create: Plaintext → Hash password → Store plaintext in memory → Encrypt → Save to disk
+Load:   Encrypted on disk → Decrypt → Store plaintext in memory → Application use
+Clear:  Plaintext in memory → Overwrite → Clear → GC collect
+```
+
+
+## Beskriv om du tager hensyn til noget andet vedrørende dekrypteret data fra hukommelsen
+
+### Ja - flere sikkerhedshensyn:
+
+**1. Overskriv før sletning (Defense-in-depth)**
+- Python's `clear()` sletter kun referencer, ikke faktisk memory
+- Vi overskriver først data med "0" * 128 for at gøre det værdiløst
+- Dette beskytter mod memory dump attacks
+
+**2. Garbage Collection**
+- Kalder `gc.collect()` for at frigive memory hurtigere
+- Reducerer vinduesperiode hvor dekrypteret data ligger i RAM
+- Ikke garanteret øjeblikkelig, men best practice
+
+**3. Kendte Memory Dump Risici**
+Vi er bevidste om følgende trusler:
+- **Swap/Pagefile**: Data kan swappes til disk (ukrypteret)
+- **Crash dumps**: Process memory dumps kan indeholde plaintext
+- **Hibernation**: RAM gemmes til disk ved sleep
+- **Cold boot attacks**: Memory kan læses kort efter power-off
+
+**4. Production Mitigations**
+I et produktionsmiljø ville vi anbefale:
+- Krypter swap partition (Linux: dm-crypt, Windows: BitLocker)
+- Disable core dumps: `ulimit -c 0`
+- Disable hibernation på servere
+- Full-disk encryption som ekstra sikkerhedslag
+- Process memory locking (`mlock()`) for kritisk data
+
+**5. Python Tekniske Begrænsninger**
+- CPython garanterer ikke fuld memory cleanup
+- Strings er immutable (gamle værdier kan overleve i heap)
+- Vores overskriving er "best effort", ikke kryptografisk garanteret
+
+**Konklusion:**
+`clear_memory()` følger best practices for Python, men har platform-begrænsninger. High-security systemer bør overveje:
+- C extensions for secure memory wiping
+- Hardware security modules (HSM)
+- Trusted execution environments (TEE)
